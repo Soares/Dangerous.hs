@@ -142,7 +142,7 @@ result :: (Either Exit a, [Warning]) -> Either Exit a
 result = fst
 
 execute :: (Either Exit a, [Warning]) -> IO a
-execute (r, ws) = mapM_ print ws >> extract r
+execute (r, ws) = mapM_ (hPrint stderr) ws >> extract r
 
 extract :: Either Exit a -> IO a
 extract (Left (Stop s)) = putStrLn s >> exitSuccess
