@@ -21,9 +21,6 @@ module Control.Dangerous
 import Prelude hiding ( log )
 import Control.Arrow
 import Control.Monad.Trans
-import Control.Monad.Error
-import Control.Monad.State
-import Control.Monad.Reader
 import System.Exit
 import System.IO
 import Text.Printf

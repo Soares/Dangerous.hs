@@ -1,4 +1,4 @@
-Name:          Control
+Name:          Dangerous
 Version:       0.1
 License:       MIT
 License-file:  LICENSE
@@ -13,14 +13,14 @@ Maintainer:    nate@natesoares.com
 Build-Type:    Simple
 Cabal-Version: >=1.6
 
-source-repository this
+source-repository head
     type: git
-    location: git://github.com/Soares/Dangerous.git
-    tag: v1.0
+    location: git://github.com/Soares/Dangerous.hs.git
 
 Library
     Hs-Source-Dirs:   src
-    Build-Depends:    base >= 4 && < 5
+    Build-Depends:    base >= 4 && < 5,
+                      mtl >= 1.0
     Exposed-modules:  Control.Dangerous
     Ghc-Options:      -Wall
     Ghc-Prof-Options: -auto-all
