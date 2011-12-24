@@ -87,9 +87,8 @@ instance Monad Dangerous where
     fail s = Dangerous (Left $ Failure s, [])
     return x = Dangerous (Right x, [])
     (Dangerous (Left e, ws)) >>= _ = Dangerous (Left e, ws)
-    (Dangerous (Right v, ws)) >>= f = Dangerous $ case f v of
-        Dangerous (Right v', ws') -> (Right v', ws ++ ws')
-        Dangerous (Left e, ws') -> (Left e, ws ++ ws')
+    (Dangerous (Right v, ws)) >>= f = Dangerous $
+        second (ws ++) $ runDangerous $ f v
 
 instance Errorable Dangerous where
     log w = Dangerous (Right (), [w])
