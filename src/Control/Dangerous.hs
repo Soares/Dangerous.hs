@@ -11,6 +11,7 @@ module Control.Dangerous
     , warnings
     , result
     , execute
+    , extract
     ) where
 
 
@@ -140,8 +141,11 @@ warnings = snd
 result :: (Either Exit a, [Warning]) -> Either Exit a
 result = fst
 
-execute :: Either Exit a -> IO a
-execute (Left (Stop s)) = putStrLn s >> exitSuccess
-execute (Left (Failure s)) = hPutStrLn stderr s >> exitFailure
-execute (Left (Exit n s)) = hPutStrLn stderr s >> exitWith (ExitFailure n)
-execute (Right a) = return a
+execute :: (Either Exit a, [Warning]) -> IO a
+execute (r, ws) = mapM_ print ws >> extract r
+
+extract :: Either Exit a -> IO a
+extract (Left (Stop s)) = putStrLn s >> exitSuccess
+extract (Left (Failure s)) = hPutStrLn stderr s >> exitFailure
+extract (Left (Exit n s)) = hPutStrLn stderr s >> exitWith (ExitFailure n)
+extract (Right a) = return a
