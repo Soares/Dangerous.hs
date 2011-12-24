@@ -3,11 +3,7 @@ module Control.Dangerous
     , Warning(..)
     , Dangerous(..)
     , DangerousT(..)
-    , warn
-    , throw
-    , throw_
-    , stop
-    , stop_
+    , Errorable(..)
     , succeeded
     , failed
     , stopped
