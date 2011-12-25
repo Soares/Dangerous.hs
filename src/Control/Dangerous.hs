@@ -12,6 +12,7 @@ module Control.Dangerous
     , result
     , execute
     , extract
+    , dangerize
     ) where
 
 
@@ -149,3 +150,7 @@ extract (Left (Stop s)) = putStrLn s >> exitSuccess
 extract (Left (Failure s)) = hPutStrLn stderr s >> exitFailure
 extract (Left (Exit n s)) = hPutStrLn stderr s >> exitWith (ExitFailure n)
 extract (Right a) = return a
+
+dangerize :: (Errorable m, Show s) => Either s a -> m a
+dangerize (Left e) = throw e
+dangerize (Right v) = return v
