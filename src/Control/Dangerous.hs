@@ -17,6 +17,7 @@ module Control.Dangerous
 
 
 import Prelude hiding ( log )
+import Control.Applicative
 import Control.Arrow
 import Control.Monad.Trans
 import System.Exit
@@ -81,6 +82,14 @@ instance Functor Dangerous where
     fmap f (Dangerous (Right v, ws)) = Dangerous (Right (f v), ws)
     fmap _ (Dangerous (Left e, ws)) = Dangerous (Left e, ws)
 
+instance Applicative Dangerous where
+    pure x = Dangerous (Right x, [])
+    (Dangerous (Left e, ws)) <*> _ = Dangerous (Left e, ws)
+    (Dangerous (Right _, ws)) <*> (Dangerous (Left e, ws')) =
+        Dangerous (Left e, ws ++ ws')
+    (Dangerous (Right f, ws)) <*> (Dangerous (Right x, ws')) =
+        Dangerous (Right $ f x, ws ++ ws')
+
 instance Monad Dangerous where
     fail s = Dangerous (Left $ Failure s, [])
     return x = Dangerous (Right x, [])
@@ -96,6 +105,13 @@ instance Errorable Dangerous where
 -- The Dangerous Monad Transformer
 data DangerousT m a = DangerousT {
     runDangerousT :: m (Either Exit a, [Warning]) }
+
+instance (Applicative f, Monad f) => Applicative (DangerousT f) where
+    pure f = DangerousT $ pure (Right f, [])
+    (DangerousT ff) <*> (DangerousT fa) = DangerousT $ thread <$> ff <*> fa where
+        thread (Left e, ws) _ = (Left e, ws)
+        thread (Right _, ws) (Left e, ws') = (Left e, ws ++ ws')
+        thread (Right f, ws) (Right x, ws') = (Right $ f x, ws ++ ws')
 
 instance (Functor m) => Functor (DangerousT m) where
     fmap f (DangerousT mapable) = DangerousT (fmap (first apply) mapable) where
