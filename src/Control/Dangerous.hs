@@ -12,6 +12,7 @@ module Control.Dangerous
     , result
     , execute
     , extract
+    , dangerously
     , dangerize
     ) where
 
@@ -160,6 +161,9 @@ result = fst
 
 execute :: (Either Exit a, [Warning]) -> IO a
 execute (r, ws) = mapM_ (hPrint stderr) ws >> extract r
+
+dangerously :: Dangerous a -> IO a
+dangerously = execute . runDangerous
 
 extract :: Either Exit a -> IO a
 extract (Left (Stop s)) = putStrLn s >> exitSuccess
